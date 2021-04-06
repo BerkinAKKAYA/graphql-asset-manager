@@ -4,7 +4,7 @@ const { buildSchema } = require("graphql");
 
 const database = ["PoWeR_TIG_2200", "GKM_250", "RKM_800"];
 
-// Construct a schema, using GraphQL schema language
+// Endpoints and Types
 const schema = buildSchema(`
 	enum Size {
 		Large
@@ -17,14 +17,21 @@ const schema = buildSchema(`
 		size: Size
 	}
 	type Query {
+		# Get All Images in the Database
 		images: [String]
+
+		# Get Multiple Sizes of an Image
 		links(name: String, sizes: [Size]): [Link]
+
+		# Get One Size of an Image
 		link(name: String, size: Size): String
+
+		# Add A New Image Entry
 		addImage(name: String): String
 	}
 `);
 
-// The root provides a resolver function for each API endpoint
+// What Each Endpoint Does
 const rootValue = {
 	images: () => database,
 	links: ({ name, sizes }) => {
@@ -54,6 +61,7 @@ const rootValue = {
 	},
 };
 
+// Serve with Express
 const app = express();
 app.use(
 	"/graphql",
