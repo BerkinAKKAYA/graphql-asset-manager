@@ -14,12 +14,12 @@ const schema = buildSchema(`
 	type Link {
 		name: String
 		address: String
-		res: Size
+		size: Size
 	}
 	type Query {
 		images: [String]
-		links(name: String, resolutions: [Size]): [Link]
-		link(name: String, resolution: Size): String
+		links(name: String, sizes: [Size]): [Link]
+		link(name: String, size: Size): String
 		addImage(name: String): String
 	}
 `);
@@ -27,21 +27,21 @@ const schema = buildSchema(`
 // The root provides a resolver function for each API endpoint
 const rootValue = {
 	images: () => database,
-	links: ({ name, resolutions }) => {
+	links: ({ name, sizes }) => {
 		const list = [];
 
-		for (const resolution of resolutions) {
+		for (const size of sizes) {
 			list.push({
-				address: `cdn.gedik.com/${name}_${resolution}.jpg`,
-				res: resolution,
+				address: `cdn.gedik.com/${name}_${size}.jpg`,
+				size,
 				name,
 			});
 		}
 
 		return list;
 	},
-	link: ({ name, resolution }) => {
-		return `cdn.gedik.com/${name}_${resolution}.jpg`;
+	link: ({ name, size }) => {
+		return `cdn.gedik.com/${name}_${size}.jpg`;
 	},
 	addImage: ({ name }) => {
 		if (database.includes(name)) {
